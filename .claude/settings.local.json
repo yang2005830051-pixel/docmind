@@ -10,7 +10,8 @@
       "Bash(taskkill //F //IM streamlit.exe)",
       "Bash(pkill -f streamlit)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

@@ -1,8 +1,8 @@
 @echo off
-chcp 65001 >nul
+chcp 65001 >nul 2>&1
 cd /d "%~dp0"
 echo ========================================
-echo   技术文档智能问答系统 - 启动中...
+echo   DocMind - Starting...
 echo ========================================
 echo.
 .venv\Scripts\streamlit run app.py

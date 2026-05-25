@@ -1,75 +1,74 @@
 @echo off
-chcp 65001 >nul
+chcp 65001 >nul 2>&1
 cd /d "%~dp0"
 echo ========================================
-echo   技术文档智能问答 - 环境检查
+echo   DocMind - Environment Setup
 echo ========================================
 echo.
 
-:: 检查 Python
-echo [检查] Python 3.12...
+:: Check Python
+echo [Check] Python 3.12...
 py -3.12 --version >nul 2>&1
 if errorlevel 1 (
-    echo [缺失] Python 3.12 未安装
-    echo        请从 https://www.python.org/downloads/ 下载安装
-    echo        安装时务必勾选 "Add Python to PATH"
+    echo [MISSING] Python 3.12 not found
+    echo        Please install from https://www.python.org/downloads/
+    echo        Make sure to check "Add Python to PATH"
     echo.
     pause
     exit /b 1
 ) else (
     for /f "tokens=*" %%i in ('py -3.12 --version') do set PYVER=%%i
-    echo [通过] %PYVER%
+    echo [OK] %PYVER%
 )
 
-:: 检查虚拟环境
+:: Check venv
 echo.
-echo [检查] 虚拟环境...
+echo [Check] Virtual environment...
 if exist .venv\Scripts\python.exe (
-    echo [通过] 虚拟环境已存在
+    echo [OK] Virtual environment exists
 ) else (
-    echo [安装] 创建虚拟环境...
+    echo [INSTALL] Creating virtual environment...
     py -3.12 -m venv .venv
     if errorlevel 1 (
-        echo [失败] 创建虚拟环境失败
+        echo [FAIL] Failed to create virtual environment
         pause
         exit /b 1
     )
-    echo [完成] 虚拟环境创建成功
+    echo [DONE] Virtual environment created
 )
 
-:: 检查依赖
+:: Check dependencies
 echo.
-echo [检查] 项目依赖...
+echo [Check] Dependencies...
 .venv\Scripts\python -c "import streamlit" >nul 2>&1
 if errorlevel 1 (
-    echo [安装] 首次安装依赖（约2-3分钟）...
+    echo [INSTALL] Installing dependencies (about 2-3 min)...
     .venv\Scripts\pip install -r requirements.txt -q
     if errorlevel 1 (
-        echo [失败] 依赖安装失败
+        echo [FAIL] Failed to install dependencies
         pause
         exit /b 1
     )
-    echo [完成] 依赖安装成功
+    echo [DONE] Dependencies installed
 ) else (
-    echo [通过] 依赖已安装
+    echo [OK] Dependencies installed
 )
 
-:: 检查环境变量
+:: Check .env
 echo.
-echo [检查] 环境配置...
+echo [Check] Environment config...
 if exist .env (
-    echo [通过] .env 配置文件已存在
+    echo [OK] .env file exists
 ) else (
     copy .env.example .env >nul
-    echo [配置] 已创建 .env 文件
-    echo        请用记事本打开 .env，填入你的 API Key
+    echo [CONFIG] Created .env file
 )
 
-:: 完成
+:: Done
 echo.
 echo ========================================
-echo   所有检查通过！
+echo   All checks passed!
 echo.
-echo   下次使用直接双击 "启动.bat" 即可
+echo   Double-click "启动.bat" to start
 echo ========================================
 pause
