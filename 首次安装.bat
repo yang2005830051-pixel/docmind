@@ -1,20 +1,31 @@
-﻿@echo off
+@echo off
 cd /d "%~dp0"
 echo ========================================
 echo   DocMind - Environment Setup
 echo ========================================
 echo.
 
-:: Check Python
+:: Check Python 3.12
 echo [Check] Python 3.12...
 py -3.12 --version >/dev/null 2>&1
 if errorlevel 1 (
     echo [MISSING] Python 3.12 not found
-    echo        Please install from https://www.python.org/downloads/
-    echo        Make sure to check "Add Python to PATH"
     echo.
+    echo [INSTALL] Installing Python 3.12 via winget...
+    winget install Python.Python.3.12 --accept-source-agreements --accept-package-agreements
+    if errorlevel 1 (
+        echo.
+        echo [FAIL] Auto-install failed
+        echo        Please manually install from https://www.python.org/downloads/
+        echo        Make sure to check "Add Python to PATH"
+        pause
+        exit /b 1
+    )
+    echo.
+    echo [OK] Python 3.12 installed
+    echo      Please re-run this script
     pause
-    exit /b 1
+    exit /b 0
 ) else (
     for /f "tokens=*" %%i in ('py -3.12 --version') do set PYVER=%%i
     echo [OK] %PYVER%
