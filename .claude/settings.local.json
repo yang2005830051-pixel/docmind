@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(py -3.12 --version)",
+      "Bash(py -3.11 --version)",
+      "Bash(winget install *)",
+      "Bash(.venv/Scripts/streamlit run *)",
+      "Bash(.venv/Scripts/python -c \"import streamlit; print\\(streamlit.__version__\\)\")",
+      "Bash(taskkill //F //IM streamlit.exe)",
+      "Bash(pkill -f streamlit)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  }
+}

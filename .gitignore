@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+chroma_db/
+knowledge_base/
+logs/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.idea/
+.vscode/
+.pytest_cache/
+conversations.db
+Untitled
