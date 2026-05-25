@@ -7,7 +7,7 @@ echo.
 
 :: Check Python 3.12
 echo [Check] Python 3.12...
-py -3.12 --version >/dev/null 2>&1
+py -3.12 --version >NUL 2>&1
 if errorlevel 1 (
     echo [MISSING] Python 3.12 not found
     echo.
@@ -50,7 +50,7 @@ if exist .venv\Scripts\python.exe (
 :: Check dependencies
 echo.
 echo [Check] Dependencies...
-.venv\Scripts\python -c "import streamlit" >/dev/null 2>&1
+.venv\Scripts\python -c "import streamlit" >NUL 2>&1
 if errorlevel 1 (
     echo [INSTALL] Installing dependencies (about 2-3 min)...
     .venv\Scripts\pip install -r requirements.txt -q
@@ -70,7 +70,7 @@ echo [Check] Environment config...
 if exist .env (
     echo [OK] .env file exists
 ) else (
-    copy .env.example .env >/dev/null
+    copy .env.example .env >NUL
     echo [CONFIG] Created .env file
 )
 
