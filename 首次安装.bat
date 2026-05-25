@@ -1,5 +1,4 @@
-@echo off
-chcp 65001 >nul 2>&1
+﻿@echo off
 cd /d "%~dp0"
 echo ========================================
 echo   DocMind - Environment Setup
@@ -8,7 +7,7 @@ echo.
 
 :: Check Python
 echo [Check] Python 3.12...
-py -3.12 --version >nul 2>&1
+py -3.12 --version >/dev/null 2>&1
 if errorlevel 1 (
     echo [MISSING] Python 3.12 not found
     echo        Please install from https://www.python.org/downloads/
@@ -40,7 +39,7 @@ if exist .venv\Scripts\python.exe (
 :: Check dependencies
 echo.
 echo [Check] Dependencies...
-.venv\Scripts\python -c "import streamlit" >nul 2>&1
+.venv\Scripts\python -c "import streamlit" >/dev/null 2>&1
 if errorlevel 1 (
     echo [INSTALL] Installing dependencies (about 2-3 min)...
     .venv\Scripts\pip install -r requirements.txt -q
@@ -60,7 +59,7 @@ echo [Check] Environment config...
 if exist .env (
     echo [OK] .env file exists
 ) else (
-    copy .env.example .env >nul
+    copy .env.example .env >/dev/null
     echo [CONFIG] Created .env file
 )
 
