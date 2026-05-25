@@ -1,31 +1,33 @@
 =====================================
-  技术文档智能问答系统 - 使用说明
+  DocMind - 使用说明
 =====================================
 
-【环境要求】
-- Windows 10/11
-- Python 3.12（安装时勾选 Add to PATH）
+【最简单的方式 - 一键安装】
+1. 下载 "一键安装.bat" 文件
+2. 双击运行
+3. 等待自动完成（首次约5-10分钟）
+4. 浏览器自动打开，填入 API Key 即可使用
 
-【首次使用】
-1. 双击 "首次安装.bat"（约2-3分钟）
-2. 双击 "启动.bat"
-3. 浏览器自动打开，首次进入会弹出 API Key 配置窗口
-4. 填入任意一个可用的 API Key（OpenAI 或 DeepSeek）：
-   - OpenAI API Key：用于文档向量化（Embedding）
-   - DeepSeek API Key：用于 AI 对话（LLM）
-5. 点击保存，即可开始使用
+【手动安装】
+1. 安装 Git：https://git-scm.com/downloads
+2. 安装 Python 3.12：https://www.python.org/downloads/
+3. 打开终端，执行：
+   git clone https://github.com/yang2005830051-pixel/docmind.git
+   cd docmind
+   首次安装.bat
+   启动.bat
 
 【日常使用】
 - 双击 "启动.bat" 即可
 - 如需更换 API Key，点击页面右上角的 🔑 图标
 
-【Docker 部署】
-1. 安装 Docker Desktop
-2. 双击 "Docker启动.bat"
-3. 访问 http://localhost:8501
+【API Key 配置】
+首次启动会弹出配置窗口，填入任意一个即可：
+- OpenAI API Key：用于文档向量化（Embedding）
+- DeepSeek API Key：用于 AI 对话（LLM）
 
 【注意事项】
+- 首次安装需下载约 2GB 依赖（PyTorch），请耐心等待
 - 首次提问时会下载 AI 模型（约500MB），需联网
 - 文档支持 PDF、TXT、Markdown 格式
 - 上传的文档保存在 knowledge_base 文件夹
-- API Key 保存在 .env 文件中，可随时修改

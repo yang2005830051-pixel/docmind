@@ -25,19 +25,22 @@
 
 ## 快速开始
 
-### 环境要求
+### 一键安装（推荐）
 
-- Windows 10/11
-- Python 3.12
+1. 打开 https://github.com/yang2005830051-pixel/docmind
+2. 找到 `一键安装.bat`，点击下载
+3. 双击运行，等待自动完成（首次约5-10分钟）
+4. 浏览器自动打开，填入 API Key 即可
 
-### 安装运行
+### 手动安装
+
+**环境要求：** Windows 10/11 + Git + Python 3.12
 
 ```bash
-# 首次安装（自动创建虚拟环境、安装依赖）
-双击 首次安装.bat
-
-# 启动应用
-双击 启动.bat
+git clone https://github.com/yang2005830051-pixel/docmind.git
+cd docmind
+首次安装.bat
+启动.bat
 ```
 
 浏览器自动打开 `http://localhost:8501`，首次进入会弹出 API Key 配置窗口。
@@ -66,7 +69,11 @@ docker compose up -d
 ## 项目结构
 
 ```
+├── 一键安装.bat            # 一键安装脚本（发给别人用这个）
+├── 首次安装.bat            # 手动安装脚本
+├── 启动.bat                # 启动应用
 ├── app.py                  # Streamlit 主应用
+├── setup.py                # 安装逻辑
 ├── config.py               # 配置管理
 ├── requirements.txt        # 依赖列表
 ├── .env.example            # 环境变量模板
