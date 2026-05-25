@@ -52,11 +52,13 @@ def main():
 
     # Install dependencies
     print()
-    print("[3/4] Installing dependencies (about 2-3 min)...")
+    print("[3/4] Installing dependencies...")
+    print("  NOTE: First install downloads ~2GB (PyTorch), please be patient")
+    print()
     pip = VENV_DIR / "Scripts" / "pip.exe"
     req = BASE_DIR / "requirements.txt"
     if req.exists():
-        r = run(f'"{pip}" install -r "{req}" -q')
+        r = run(f'"{pip}" install -r "{req}" --prefer-binary')
         if r.returncode != 0:
             print("[FAIL] Failed to install dependencies")
             input("       Press Enter to exit...")
