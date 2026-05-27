@@ -1,19 +1,40 @@
 import time
 from langchain_openai import OpenAIEmbeddings
 
-from config import OPENAI_API_KEY, EMBEDDING_MODEL, EMBEDDING_MAX_RETRIES
+from config import (
+    OPENAI_API_KEY, EMBEDDING_MODEL, EMBEDDING_MAX_RETRIES,
+    MIMO_API_KEY, MIMO_BASE_URL, SILICONFLOW_EMBEDDING_MODEL,
+    get_embedding_provider,
+)
 from src.logger import get_logger
 
 logger = get_logger("embeddings")
 
 
 def get_embeddings() -> OpenAIEmbeddings:
-    return OpenAIEmbeddings(
-        model=EMBEDDING_MODEL,
-        openai_api_key=OPENAI_API_KEY,
-        max_retries=EMBEDDING_MAX_RETRIES,
-        request_timeout=30,
-    )
+    provider = get_embedding_provider()
+
+    if provider == "openai":
+        return OpenAIEmbeddings(
+            model=EMBEDDING_MODEL,
+            openai_api_key=OPENAI_API_KEY,
+            max_retries=EMBEDDING_MAX_RETRIES,
+            request_timeout=30,
+        )
+
+    elif provider == "siliconflow":
+        return OpenAIEmbeddings(
+            model=SILICONFLOW_EMBEDDING_MODEL,
+            openai_api_key=MIMO_API_KEY,
+            openai_api_base=MIMO_BASE_URL,
+            max_retries=EMBEDDING_MAX_RETRIES,
+            request_timeout=30,
+        )
+
+    else:
+        raise ValueError(
+            "未配置嵌入 API Key，请设置 OPENAI_API_KEY 或 MIMO_API_KEY"
+        )
 
 
 def embed_documents_safe(texts: list[str], batch_size: int = 100) -> list[list[float]]:

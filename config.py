@@ -18,7 +18,9 @@ MIMO_API_KEY = os.getenv("MIMO_API_KEY", "")
 MIMO_BASE_URL = os.getenv("MIMO_BASE_URL", "https://api.siliconflow.cn/v1")
 
 # ── 嵌入模型 ──
+EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "auto")  # auto / openai / siliconflow
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+SILICONFLOW_EMBEDDING_MODEL = os.getenv("SILICONFLOW_EMBEDDING_MODEL", "BAAI/bge-large-zh-v1.5")
 
 # ── 分块参数 ──
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "512"))
@@ -62,6 +64,17 @@ SYSTEM_PROMPT = os.getenv("SYSTEM_PROMPT", """你是一个技术文档问答助�
 5. 如果用户追问，结合对话历史理解上下文""")
 
 
+def get_embedding_provider() -> str:
+    """自动检测可用的嵌入提供商。"""
+    if EMBEDDING_PROVIDER != "auto":
+        return EMBEDDING_PROVIDER
+    if OPENAI_API_KEY:
+        return "openai"
+    if MIMO_API_KEY:
+        return "siliconflow"
+    return "none"
+
+
 def get_available_llm_provider() -> str:
     """自动检测可用的 LLM 提供商。"""
     if LLM_PROVIDER != "auto":
@@ -78,7 +91,8 @@ def get_available_llm_provider() -> str:
 def validate_config() -> list[str]:
     """验证配置，返回警告信息列表。"""
     warnings = []
-    if not OPENAI_API_KEY and not DEEPSEEK_API_KEY and not MIMO_API_KEY:
+    has_any_key = OPENAI_API_KEY or DEEPSEEK_API_KEY or MIMO_API_KEY
+    if not has_any_key:
         warnings.append("未配置任何 API Key，请设置 OPENAI_API_KEY、DEEPSEEK_API_KEY 或 MIMO_API_KEY")
     if CHUNK_SIZE < 64:
         warnings.append(f"CHUNK_SIZE={CHUNK_SIZE} 过小，建议至少 128")
