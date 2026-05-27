@@ -9,6 +9,9 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from src.document_loader import DocumentLoader
 from src.rag_chain import RAGChain
@@ -16,7 +19,12 @@ from src.logger import get_logger
 
 logger = get_logger("server")
 
+# 限流配置
+limiter = Limiter(key_func=get_remote_address, default_limits=["100/minute"])
+
 app = FastAPI(title="DocMind API")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS 限制为本地开发
 app.add_middleware(
@@ -108,7 +116,8 @@ async def delete_file(filename: str):
 
 
 @app.post("/api/upload")
-async def upload_files(files: list[UploadFile] = File(...)):
+@limiter.limit("10/minute")  # 上传接口严格限流
+async def upload_files(request: Request, files: list[UploadFile] = File(...)):
     from src.vector_store import VectorStore
 
     if not files:
@@ -150,7 +159,8 @@ class ChatRequest(BaseModel):
 
 
 @app.post("/api/chat")
-async def chat(req: ChatRequest):
+@limiter.limit("20/minute")  # 聊天接口更严格限流
+async def chat(request: Request, req: ChatRequest):
     if not req.message.strip():
         raise HTTPException(status_code=400, detail="消息不能为空")
 
@@ -176,6 +186,37 @@ async def clear_chat():
     _rag_chain.clear_memory()
     _messages.clear()
     return {"status": "ok"}
+
+
+@app.get("/api/export")
+@limiter.limit("30/minute")
+async def export_chat(request: Request):
+    """导出对话历史为 Markdown 格式。"""
+    if not _messages:
+        raise HTTPException(status_code=400, detail="没有对话记录可导出")
+
+    # 生成 Markdown 内容
+    md_lines = ["# DocMind 对话记录\n"]
+    md_lines.append(f"导出时间: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+    md_lines.append("---\n")
+
+    for i, msg in enumerate(_messages, 1):
+        role = "用户" if msg["role"] == "user" else "助手"
+        md_lines.append(f"## {role} [{i}]\n")
+        md_lines.append(f"{msg['content']}\n")
+        md_lines.append("---\n")
+
+    content = "\n".join(md_lines)
+
+    # 返回文件下载
+    from fastapi.responses import Response
+    return Response(
+        content=content.encode("utf-8"),
+        media_type="text/markdown; charset=utf-8",
+        headers={
+            "Content-Disposition": f"attachment; filename=docmind_chat_{__import__('datetime').datetime.now().strftime('%Y%m%d_%H%M%S')}.md"
+        }
+    )
 
 
 # ── Key 管理 ──

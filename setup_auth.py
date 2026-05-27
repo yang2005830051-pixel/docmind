@@ -5,6 +5,8 @@ import getpass
 import hashlib
 import base64
 import os
+import secrets
+import string
 
 
 def generate_htpasswd(username: str, password: str) -> str:
@@ -15,6 +17,12 @@ def generate_htpasswd(username: str, password: str) -> str:
     return f"{username}:{{SSHA}}{encoded}"
 
 
+def generate_random_password(length: int = 12) -> str:
+    """生成随机密码。"""
+    alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+
 def main():
     print("=" * 40)
     print("  DocMind - 创建登录账号")
@@ -23,15 +31,22 @@ def main():
     if len(sys.argv) >= 3:
         username = sys.argv[1]
         password = sys.argv[2]
+    elif len(sys.argv) == 2:
+        # 只提供用户名，自动生成密码
+        username = sys.argv[1]
+        password = generate_random_password()
+        print(f"\n自动生成密码: {password}")
+        print("请妥善保存此密码！")
     else:
         username = input("\n用户名: ").strip()
         if not username:
             print("用户名不能为空")
             return
-        password = getpass.getpass("密码: ").strip()
+        password = getpass.getpass("密码 (留空自动生成): ").strip()
         if not password:
-            print("密码不能为空")
-            return
+            password = generate_random_password()
+            print(f"\n自动生成密码: {password}")
+            print("请妥善保存此密码！")
 
     line = generate_htpasswd(username, password)
     htpasswd_path = os.path.join(os.path.dirname(__file__), "nginx.htpasswd")

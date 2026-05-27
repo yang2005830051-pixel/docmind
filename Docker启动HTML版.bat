@@ -27,11 +27,11 @@ if not exist .env (
 
 :: 检查 nginx.htpasswd
 if not exist nginx.htpasswd (
-    echo [提示] 未找到密码文件，正在创建默认账号...
-    echo 默认账号: admin / admin
-    echo 建议稍后运行 python setup_auth.py 修改密码
+    echo [提示] 未找到密码文件，正在创建账号...
     echo.
-    python setup_auth.py admin admin
+    python setup_auth.py admin
+    echo.
+    echo [重要] 请记住上面生成的密码！
 )
 
 echo 正在启动服务...

@@ -1119,6 +1119,7 @@ html, body {
         </div>
 
         <div class="sidebar-footer">
+            <button class="btn-sidebar" id="btnExport">导出对话</button>
             <button class="btn-sidebar danger" id="btnClear">清空对话</button>
         </div>
     </aside>
@@ -1278,6 +1279,9 @@ function bindEvents() {
 
     // Clear
     btnClear.addEventListener('click', clearChat);
+
+    // Export
+    btnExport.addEventListener('click', exportChat);
 
     // Key modal
     btnKey.addEventListener('click', openKeyModal);
@@ -1570,6 +1574,33 @@ async function clearChat() {
     }
     updateStats();
     showToast('对话已清空', 'success');
+}
+
+// ── Export chat ──
+async function exportChat() {
+    if (state.messages.length === 0) {
+        showToast('没有对话记录可导出', 'warning');
+        return;
+    }
+    try {
+        const resp = await fetchWithTimeout(`${API_BASE}/api/export`);
+        if (!resp.ok) {
+            const data = await resp.json();
+            throw new Error(data.detail || '导出失败');
+        }
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `docmind_chat_${new Date().toISOString().slice(0, 10)}.md`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('对话已导出', 'success');
+    } catch (e) {
+        showToast(`导出失败: ${e.message}`, 'error');
+    }
 }
 
 // ── Key Modal ──
