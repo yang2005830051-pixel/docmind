@@ -52,7 +52,7 @@ def test_load_text_file():
         loader = DocumentLoader()
         test_file = os.path.join(tmpdir, "test.txt")
         with open(test_file, 'w', encoding='utf-8') as f:
-            f.write("这是测试内容\n\n第二段")
+            f.write("这是一段足够长的测试内容，用于验证文本文件加载功能是否正常工作。\n\n这是第二段内容，同样需要足够的长度来通过最小长度过滤。")
         chunks = loader.load_file(test_file)
         assert len(chunks) >= 1
         assert any("测试内容" in c.content for c in chunks)

@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "question": "什么是 RAG？",
+    "expected_keywords": ["检索", "增强", "生成", "Retrieval", "Augmented", "Generation"],
+    "category": "概念理解",
+    "difficulty": "基础"
+  },
+  {
+    "id": 2,
+    "question": "文档分块时如何处理代码块？",
+    "expected_keywords": ["代码块", "```", "分块", "独立", "保留"],
+    "category": "分块策略",
+    "difficulty": "中等"
+  },
+  {
+    "id": 3,
+    "question": "向量数据库中使用什么距离度量？",
+    "expected_keywords": ["cosine", "余弦", "相似度", "距离"],
+    "category": "向量存储",
+    "difficulty": "基础"
+  },
+  {
+    "id": 4,
+    "question": "重排序的作用是什么？",
+    "expected_keywords": ["重排", "rerank", "精排", "排序", "相关性"],
+    "category": "检索优化",
+    "difficulty": "中等"
+  },
+  {
+    "id": 5,
+    "question": "对话记忆如何实现窗口限制？",
+    "expected_keywords": ["窗口", "window", "截断", "历史", "消息"],
+    "category": "对话管理",
+    "difficulty": "中等"
+  },
+  {
+    "id": 6,
+    "question": "嵌入模型用的是哪个？",
+    "expected_keywords": ["text-embedding", "OpenAI", "embedding", "向量化"],
+    "category": "模型配置",
+    "difficulty": "基础"
+  },
+  {
+    "id": 7,
+    "question": "LLM 调用失败时如何处理？",
+    "expected_keywords": ["重试", "retry", "延迟", "异常", "错误"],
+    "category": "容错处理",
+    "difficulty": "中等"
+  },
+  {
+    "id": 8,
+    "question": "如何防止文件路径遍历攻击？",
+    "expected_keywords": ["路径遍历", "../", "校验", "安全", "防护"],
+    "category": "安全性",
+    "difficulty": "进阶"
+  },
+  {
+    "id": 9,
+    "question": "Markdown 表格是怎么分块的？",
+    "expected_keywords": ["表格", "table", "行", "分隔", "识别"],
+    "category": "分块策略",
+    "difficulty": "中等"
+  },
+  {
+    "id": 10,
+    "question": "检索流程有几层？分别是什么？",
+    "expected_keywords": ["摘要", "内容", "重排", "三层", "检索"],
+    "category": "检索架构",
+    "difficulty": "中等"
+  },
+  {
+    "id": 11,
+    "question": "API Key 保存在哪里？",
+    "expected_keywords": [".env", "环境变量", "配置文件"],
+    "category": "配置管理",
+    "difficulty": "基础"
+  },
+  {
+    "id": 12,
+    "question": "ChromaDB 的持久化目录是什么？",
+    "expected_keywords": ["chroma_db", "持久化", "目录", "存储"],
+    "category": "向量存储",
+    "difficulty": "基础"
+  }
+]

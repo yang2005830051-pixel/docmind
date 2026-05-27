@@ -1,5 +1,9 @@
 from typing import List, Dict
 
+from src.logger import get_logger
+
+logger = get_logger("reranker")
+
 
 class Reranker:
     def __init__(self):
@@ -11,13 +15,16 @@ class Reranker:
         if self._available is False:
             return None
         if self._model is None:
+            from config import RERANKER_MODEL
+            if not RERANKER_MODEL:
+                self._available = False
+                return None
             try:
                 from sentence_transformers import CrossEncoder
-                from config import RERANKER_MODEL
                 self._model = CrossEncoder(RERANKER_MODEL)
                 self._available = True
             except Exception as e:
-                print(f"Reranker 模型加载失败，将跳过重排序: {e}")
+                logger.warning(f"Reranker 模型加载失败，将跳过重排序: {e}")
                 self._available = False
                 return None
         return self._model

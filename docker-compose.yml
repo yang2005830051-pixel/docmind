@@ -2,17 +2,40 @@ version: "3.8"
 
 services:
   app:
-    build: .
-    ports:
-      - "8501:8501"
+    build:
+      context: .
+      args:
+        WORKERS: "${WORKERS:-1}"
     volumes:
       - ./knowledge_base:/app/knowledge_base
       - ./chroma_db:/app/chroma_db
       - ./logs:/app/logs
+      - ./.env:/app/.env:ro
     env_file:
       - .env
+    environment:
+      - WORKERS=${WORKERS:-1}
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          memory: 4G
+          memory: ${MEMORY_LIMIT:-2G}
+          cpus: "${CPU_LIMIT:-2.0}"
+    # 不直接暴露端口，通过 nginx 代理
+    expose:
+      - "8501"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "${APP_PORT:-80}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.htpasswd:/etc/nginx/.htpasswd:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 64M

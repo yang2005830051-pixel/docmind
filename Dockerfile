@@ -15,7 +15,10 @@ RUN mkdir -p knowledge_base chroma_db logs
 
 EXPOSE 8501
 
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')" || exit 1
+ARG WORKERS=1
+ENV WORKERS=${WORKERS}
 
-CMD ["streamlit", "run", "app.py", "--server.headless=true", "--server.address=0.0.0.0", "--server.port=8501"]
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/health')" || exit 1
+
+CMD ["sh", "-c", "uvicorn server:app --host 0.0.0.0 --port 8501 --workers ${WORKERS}"]

@@ -1,8 +1,8 @@
 import re
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List
 
-from config import CHUNK_SIZE, CHUNK_OVERLAP
+from config import CHUNK_SIZE, CHUNK_OVERLAP, MIN_CHUNK_LENGTH
 
 
 @dataclass
@@ -27,7 +27,8 @@ class HybridChunker:
                 chunks.extend(self._chunk_table(content, source, page))
             else:
                 chunks.extend(self._chunk_text(content, source, page))
-        return chunks
+        # 过滤过短的 chunk
+        return [c for c in chunks if len(c.content.strip()) >= MIN_CHUNK_LENGTH]
 
     def _split_by_type(self, text: str) -> List[tuple]:
         segments = []
@@ -111,13 +112,18 @@ class HybridChunker:
             else:
                 if current:
                     chunks.append(current)
+                    # 重叠窗口：保留末尾 chunk_overlap 字符作为下一段的开头
+                    if self.chunk_overlap > 0 and len(current) > self.chunk_overlap:
+                        current = current[-self.chunk_overlap:]
+                    else:
+                        current = ""
                 if len(para) > self.chunk_size:
                     sub_chunks = self._split_long_paragraph(para)
                     chunks.extend(sub_chunks)
+                    current = ""
                 else:
                     current = para
                     continue
-                current = ""
         if current.strip():
             chunks.append(current)
         return [Chunk(
@@ -135,7 +141,13 @@ class HybridChunker:
             else:
                 if current:
                     chunks.append(current)
-                current = sent
+                # 超长句子强制按 chunk_size 切割
+                if len(sent) > self.chunk_size:
+                    for i in range(0, len(sent), self.chunk_size):
+                        chunks.append(sent[i:i + self.chunk_size])
+                    current = ""
+                else:
+                    current = sent
         if current.strip():
             chunks.append(current)
         return chunks
