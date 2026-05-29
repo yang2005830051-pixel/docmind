@@ -9,13 +9,13 @@
 - **多格式支持**：PDF、TXT、Markdown 文档直接上传
 - **多轮对话**：支持上下文记忆，基于 SQLite 持久化存储
 - **多模型切换**：支持 OpenAI Embedding + DeepSeek LLM
-- **简洁 UI**：Streamlit 构建，API Key 在线配置
+- **简洁 UI**：HTML + FastAPI 构建，API Key 在线配置
 
 ## 技术栈
 
 | 组件 | 技术 |
 |------|------|
-| 前端 | Streamlit |
+| 前端 | HTML + FastAPI |
 | 向量数据库 | ChromaDB |
 | Embedding | OpenAI text-embedding-3-small |
 | LLM | DeepSeek-Chat |
@@ -43,7 +43,7 @@ cd docmind
 启动.bat
 ```
 
-浏览器自动打开 `http://localhost:8501`，首次进入会弹出 API Key 配置窗口。
+浏览器打开 `http://localhost:8501`，首次进入会弹出 API Key 配置窗口。
 
 ### Docker 部署
 
@@ -72,7 +72,8 @@ docker compose up -d
 ├── 一键安装.bat            # 一键安装脚本（发给别人用这个）
 ├── 首次安装.bat            # 手动安装脚本
 ├── 启动.bat                # 启动应用
-├── app.py                  # Streamlit 主应用
+├── index.html              # HTML 前端
+├── server.py               # FastAPI 后端
 ├── setup.py                # 安装逻辑
 ├── config.py               # 配置管理
 ├── requirements.txt        # 依赖列表

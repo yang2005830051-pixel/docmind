@@ -136,15 +136,15 @@ async def upload_files(request: Request, files: list[UploadFile] = File(...)):
             if len(content) > MAX_UPLOAD_SIZE:
                 errors.append(f"{file.name}: 文件过大（限 50MB）")
                 continue
-            file_path = doc_loader.save_uploaded_file(content, file.name)
+            file_path = doc_loader.save_uploaded_file(content, file.filename)
             chunks = doc_loader.load_file(file_path)
             vector_store.add_chunks(chunks)
             summary = doc_loader.generate_summary(chunks)
-            vector_store.add_summary(file.name, summary)
-            processed.append(file.name)
+            vector_store.add_summary(file.filename, summary)
+            processed.append(file.filename)
         except Exception as e:
-            logger.error(f"处理文件 {file.name} 失败: {e}")
-            errors.append(f"{file.name}: {str(e)}")
+            logger.error(f"处理文件 {file.filename} 失败: {e}")
+            errors.append(f"{file.filename}: {str(e)}")
 
     result = {"processed": processed, "count": len(processed)}
     if errors:

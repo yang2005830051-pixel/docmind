@@ -1,8 +1,12 @@
+import os
 from typing import List, Dict
 
 from src.logger import get_logger
 
 logger = get_logger("reranker")
+
+# 配置 HuggingFace 镜像源（国内访问）
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 
 
 class Reranker:
@@ -21,6 +25,7 @@ class Reranker:
                 return None
             try:
                 from sentence_transformers import CrossEncoder
+                logger.info(f"加载 Reranker 模型: {RERANKER_MODEL}")
                 self._model = CrossEncoder(RERANKER_MODEL)
                 self._available = True
             except Exception as e:

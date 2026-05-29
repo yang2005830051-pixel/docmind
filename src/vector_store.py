@@ -66,7 +66,11 @@ class VectorStore:
             return 0
         logger.info(f"添加 {len(chunks)} 个文档片段到向量库")
         texts = [c.content for c in chunks]
-        embeddings = self.embeddings.embed_documents(texts)
+
+        # 分批处理 embedding，避免超过 512 tokens 限制
+        from src.embeddings import embed_documents_safe
+        embeddings = embed_documents_safe(texts, batch_size=50)
+
         source = chunks[0].metadata.get("source", "") if chunks else ""
         ids = [_make_chunk_id(source, c.content, i) for i, c in enumerate(chunks)]
         metadatas = [{"source": c.metadata.get("source", ""),
@@ -79,10 +83,17 @@ class VectorStore:
         return len(chunks)
 
     def add_summary(self, source: str, summary: str):
-        embedding = self.embeddings.embed_query(summary)
+        # 截断 summary 避免超过 512 tokens 限制
+        MAX_CHARS = 1500
+        truncated_summary = summary[:MAX_CHARS] if len(summary) > MAX_CHARS else summary
+
+        from src.embeddings import embed_documents_safe
+        embeddings = embed_documents_safe([truncated_summary], batch_size=1)
+        embedding = embeddings[0] if embeddings else []
+
         self.summary_collection.upsert(
             ids=[f"summary_{source}"],
-            documents=[summary],
+            documents=[truncated_summary],
             embeddings=[embedding],
             metadatas=[{"source": source}]
         )

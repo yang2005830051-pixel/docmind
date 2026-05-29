@@ -37,12 +37,22 @@ def get_embeddings() -> OpenAIEmbeddings:
         )
 
 
-def embed_documents_safe(texts: list[str], batch_size: int = 100) -> list[list[float]]:
-    """带重试的批量嵌入，处理大文档集。"""
+def embed_documents_safe(texts: list[str], batch_size: int = 50) -> list[list[float]]:
+    """带重试的批量嵌入，处理大文档集。自动截断超长文本。"""
     embeddings = get_embeddings()
+
+    # 截断超长文本（约 512 tokens ≈ 1500 字符）
+    MAX_CHARS = 1500
+    truncated_texts = []
+    for text in texts:
+        if len(text) > MAX_CHARS:
+            truncated_texts.append(text[:MAX_CHARS])
+        else:
+            truncated_texts.append(text)
+
     all_vecs = []
-    for i in range(0, len(texts), batch_size):
-        batch = texts[i:i + batch_size]
+    for i in range(0, len(truncated_texts), batch_size):
+        batch = truncated_texts[i:i + batch_size]
         for attempt in range(EMBEDDING_MAX_RETRIES):
             try:
                 vecs = embeddings.embed_documents(batch)
